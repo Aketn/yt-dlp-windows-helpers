@@ -1,0 +1,234 @@
+{
+  "version": "2.0.0",
+  "inputs": [
+    {
+      "id": "browser",
+      "type": "pickString",
+      "description": "Cookies from which browser?",
+      "options": [
+        "edge",
+        "chrome",
+        "chromium",
+        "brave",
+        "vivaldi",
+        "firefox",
+        "librewolf",
+        "none"
+      ],
+      "default": "edge"
+    },
+    {
+      "id": "container",
+      "type": "pickString",
+      "description": "Preferred container",
+      "options": ["auto", "mp4", "webm"],
+      "default": "auto"
+    },
+    {
+      "id": "urlInput",
+      "type": "promptString",
+      "description": "URL (or leave empty if using file)",
+      "default": ""
+    },
+    {
+      "id": "urlFile",
+      "type": "promptString",
+      "description": "URL list file (e.g. urls.txt)",
+      "default": ""
+    },
+    {
+      "id": "format",
+      "type": "promptString",
+      "description": "Format selector (-f)",
+      "default": "bv*+ba/b"
+    },
+    {
+      "id": "outtmpl",
+      "type": "promptString",
+      "description": "Output template (-o)",
+      "default": "%(title)s [%(id)s].%(ext)s"
+    },
+    {
+      "id": "playlist",
+      "type": "pickString",
+      "description": "Playlist download?",
+      "options": ["true", "false"],
+      "default": "false"
+    },
+    {
+      "id": "subs",
+      "type": "pickString",
+      "description": "Download subtitles?",
+      "options": ["true", "false"],
+      "default": "false"
+    },
+    {
+      "id": "sublangs",
+      "type": "promptString",
+      "description": "Subtitle languages (comma separated)",
+      "default": "ja.*,en.*"
+    },
+    {
+      "id": "sponsorblock",
+      "type": "pickString",
+      "description": "Remove SponsorBlock segments?",
+      "options": ["false", "true"],
+      "default": "false"
+    },
+    {
+      "id": "proxy",
+      "type": "promptString",
+      "description": "Proxy (e.g. socks5://127.0.0.1:1080) or empty",
+      "default": ""
+    },
+    {
+      "id": "dryRun",
+      "type": "pickString",
+      "description": "Dry run? (print command only)",
+      "options": ["false", "true"],
+      "default": "false"
+    },
+    {
+      "id": "extra",
+      "type": "promptString",
+      "description": "Extra yt-dlp args (optional)",
+      "default": ""
+    }
+  ],
+  "tasks": [
+    {
+      "label": "yt-dlp: Audio-only (m4a 192K, by site/uploader)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/yt-dlp-run.ps1",
+        "-Url","${input:urlInput}",
+        "-AudioOnly",
+        "-AudioFormat","m4a",
+        "-AudioQuality","192K",
+        "-EmbedMeta:true",
+        "-UseSiteFormatFolders",
+        "-OutBase","${workspaceFolder}",
+        "-Archive","archive-audio.txt",
+        "-Browser","${input:browser}"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "yt-dlp: List formats (loop)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile","-ExecutionPolicy","Bypass","-Command",
+        "& { $ErrorActionPreference='Stop'; chcp 65001 > $null; while ($true) { $u = Read-Host 'Enter URL (blank to exit)'; if (-not $u) { break }; ./yt-dlp-run.ps1 -Url $u -ListFormats -Playlist -Browser ${input:browser} } }"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "yt-dlp: Download URL (quick)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+  "${workspaceFolder}/yt-dlp-run.ps1",
+  "-Url", "${input:urlInput}",
+  "-Browser", "${input:browser}",
+  "-Container", "${input:container}",
+  "-TranscodeWebm:false",
+  "-UseSiteFormatFolders",
+  "-OutBase", "${workspaceFolder}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "yt-dlp: Download from file (quick)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+  "${workspaceFolder}/yt-dlp-run.ps1",
+  "-UrlFile", "${input:urlFile}",
+  "-Browser", "${input:browser}",
+  "-Container", "${input:container}",
+  "-TranscodeWebm:false",
+  "-UseSiteFormatFolders",
+  "-OutBase", "${workspaceFolder}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "yt-dlp: Download URL (advanced)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/yt-dlp-run.ps1",
+        "-Url", "${input:urlInput}",
+        "-Format", "${input:format}",
+        "-OutTemplate", "${input:outtmpl}",
+  "-Browser", "${input:browser}",
+  "-Container", "${input:container}",
+        "-Playlist:${input:playlist}",
+        "-Subtitles:${input:subs}",
+        "-SubLangs", "${input:sublangs}",
+        "-SponsorBlock:${input:sponsorblock}",
+        "-Proxy", "${input:proxy}",
+  "-UseSiteFormatFolders:false",
+  "-TranscodeWebm:false",
+  "-DryRun:${input:dryRun}",
+        "-Extra", "${input:extra}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "yt-dlp: Download from file (advanced)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/yt-dlp-run.ps1",
+        "-UrlFile", "${input:urlFile}",
+        "-Format", "${input:format}",
+        "-OutTemplate", "${input:outtmpl}",
+  "-Browser", "${input:browser}",
+  "-Container", "${input:container}",
+        "-Playlist:${input:playlist}",
+        "-Subtitles:${input:subs}",
+        "-SubLangs", "${input:sublangs}",
+        "-SponsorBlock:${input:sponsorblock}",
+        "-Proxy", "${input:proxy}",
+  "-UseSiteFormatFolders:false",
+  "-TranscodeWebm:false",
+  "-DryRun:${input:dryRun}",
+        "-Extra", "${input:extra}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

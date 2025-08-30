@@ -1,0 +1,40 @@
+{
+  // Insert URL template
+  "yt-dlp URL list header": {
+    "scope": "plaintext,markdown",
+    "prefix": "yturlhdr",
+    "body": [
+      "# URL list for yt-dlp",
+      "# Lines starting with # are ignored",
+      "# One URL per line",
+      ""
+    ],
+    "description": "Header for yt-dlp URL list files"
+  },
+  "yt-dlp PowerShell example": {
+    "scope": "powershell",
+    "prefix": "ytdlprun",
+    "body": [
+      "# yt-dlp run example",
+  "./yt-dlp-run.ps1 -Url \"$1\" -Browser edge -Format \"bv*+ba/b\" -OutTemplate \"%(title)s [%(id)s].%(ext)s\""
+    ],
+    "description": "Insert a sample command line to use yt-dlp-run.ps1"
+  },
+  "yt-dlp args snippet": {
+    "scope": "powershell",
+    "prefix": "ytdlpargs",
+    "body": [
+      "-Format \"bv*+ba/b\" -OutTemplate \"%(title)s [%(id)s].%(ext)s\" -Browser edge -Playlist:$1 -Subtitles:$2 -SubLangs \"ja.*,en.*\" -SponsorBlock:$3 -Proxy \"\" -Extra \"\""
+    ],
+    "description": "Common yt-dlp-run.ps1 arguments"
+  },
+  "yt-dlp Audio-only example": {
+    "scope": "powershell",
+    "prefix": "ytdlpaudio",
+    "body": [
+      "# download audio-only as m4a(192K) to Musics/<site>/<ext>/<uploader>/",
+      "./yt-dlp-run.ps1 -Url \"$1\" -AudioOnly -AudioFormat m4a -AudioQuality 192K -EmbedMeta -UseSiteFormatFolders -OutBase . -Browser edge"
+    ],
+    "description": "Audio-only download example with site/ext folders and metadata embedding"
+  }
+}

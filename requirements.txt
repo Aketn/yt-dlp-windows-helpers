@@ -1,0 +1,7 @@
+# Requirements for this workspace (Python packages)
+# yt-dlp: provides Python package entry point; you can install the CLI variant via pip
+yt-dlp
+
+# Notes:
+# - ffmpeg/ffprobe are required for post-processing (not a pip package). Install separately and ensure they are on PATH.
+# - Install with: python -m pip install -r requirements.txt
