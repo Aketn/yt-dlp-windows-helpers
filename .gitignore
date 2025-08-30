@@ -50,6 +50,58 @@ Musics/
 archive*.txt
 *.log
 
+# Exclude local media outputs and temp files
+# Media (video/audio)
+*.mp4
+*.mkv
+*.webm
+*.m4a
+*.mp3
+*.wav
+*.flac
+*.aac
+*.ogg
+*.opus
+*.mka
+*.mks
+
+# Subtitles/chapters
+*.srt
+*.vtt
+*.ass
+*.ssa
+*.lrc
+
+# Thumbnails and images
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.avif
+*.bmp
+*.gif
+
+# yt-dlp metadata/partials
+*.info.json
+*.description
+*.annotations.xml
+*.url
+*.webloc
+*.desktop
+*.part
+*.ytdl
+*.aria2
+*.temp
+*.tmp
+
+# Output folders created by scripts
+Movies/
+Musics/
+
+# Archives and logs
+archive*.txt
+*.log
+
 # Local binaries / vendor
 /yt-dlp/          # local clone of upstream yt-dlp repo
 yt-dlp.exe        # local binary
