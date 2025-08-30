@@ -120,8 +120,32 @@
       "type": "shell",
       "command": "pwsh",
       "args": [
-        "-NoProfile","-ExecutionPolicy","Bypass","-Command",
-        "& { $ErrorActionPreference='Stop'; chcp 65001 > $null; while ($true) { $u = Read-Host 'Enter URL (blank to exit)'; if (-not $u) { break }; ./yt-dlp-run.ps1 -Url $u -ListFormats -Playlist -Browser ${input:browser} } }"
+        "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/ListFormatsCheck.ps1",
+        "-Browser","${input:browser}"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "yt-dlp: List subtitles (loop)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/ListSubsLoop.ps1",
+        "-Browser","${input:browser}"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "yt-dlp: List subtitles (URL)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/yt-dlp-run.ps1",
+        "-Url","${input:urlInput}",
+        "-ListSubs",
+        "-Browser","${input:browser}"
       ],
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": []
@@ -138,6 +162,10 @@
   "${workspaceFolder}/yt-dlp-run.ps1",
   "-Url", "${input:urlInput}",
   "-Browser", "${input:browser}",
+  "-Subtitles:true",
+  "-SubLangs", "ja,en",
+  "-SubsFormat", "srt",
+  "-SubtitlesDir", "${workspaceFolder}/Subtitles",
   "-Container", "${input:container}",
   "-TranscodeWebm:false",
   "-UseSiteFormatFolders",
@@ -160,6 +188,10 @@
   "${workspaceFolder}/yt-dlp-run.ps1",
   "-UrlFile", "${input:urlFile}",
   "-Browser", "${input:browser}",
+  "-Subtitles:true",
+  "-SubLangs", "ja,en",
+  "-SubsFormat", "srt",
+  "-SubtitlesDir", "${workspaceFolder}/Subtitles",
   "-Container", "${input:container}",
   "-TranscodeWebm:false",
   "-UseSiteFormatFolders",

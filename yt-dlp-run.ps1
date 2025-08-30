@@ -19,13 +19,16 @@ param(
     [Parameter(Mandatory=$false)][string]$OutBase = ".",
     [Parameter(Mandatory=$false)][switch]$PrintSummary = $true,
     [Parameter(Mandatory=$false)][switch]$ListFormats,
+    [Parameter(Mandatory=$false)][switch]$ListSubs,
     [Parameter(Mandatory=$false)][string]$Archive,
     [Parameter(Mandatory=$false)][ValidateSet('edge','chrome','chromium','brave','vivaldi','firefox','librewolf','safari','none')]
     [string]$Browser = 'edge',
     [Parameter(Mandatory=$false)][switch]$NoCookies,
     [Parameter(Mandatory=$false)][switch]$Playlist,
     [Parameter(Mandatory=$false)][switch]$Subtitles,
-    [Parameter(Mandatory=$false)][string]$SubLangs = "ja.*,en.*",
+    [Parameter(Mandatory=$false)][string]$SubLangs = "ja,en",
+    [Parameter(Mandatory=$false)][string]$SubtitlesDir,
+    [Parameter(Mandatory=$false)][string]$SubsFormat,
     [Parameter(Mandatory=$false)][switch]$SponsorBlock,
     [Parameter(Mandatory=$false)][string]$Proxy,
     [Parameter(Mandatory=$false)][int]$Retry = 3,
@@ -68,7 +71,7 @@ function Get-CookieArgs {
 
 function Get-CommonArgs {
     param(
-    [string]$Format,[string]$OutTemplate,[string]$Proxy,[int]$Retry,[int]$FragmentRetries,[switch]$Subtitles,[string]$SubLangs,[switch]$SponsorBlock,[string]$Extra,[string]$Archive,[string]$YtHelp,
+    [string]$Format,[string]$OutTemplate,[string]$Proxy,[int]$Retry,[int]$FragmentRetries,[switch]$Subtitles,[string]$SubLangs,[string]$SubtitlesDir,[string]$SubsFormat,[switch]$SponsorBlock,[string]$Extra,[string]$Archive,[string]$YtHelp,
     [switch]$AudioOnly,[string]$AudioFormat,[string]$AudioQuality,[switch]$EmbedMeta,[switch]$TranscodeWebm,[ValidateSet('auto','mp4','webm')] [string]$Container,[switch]$UseSiteFormatFolders,[string]$OutBase,[switch]$PrintSummary,[switch]$ListFormats
     )
     # Output template auto layout if requested
@@ -86,13 +89,27 @@ function Get-CommonArgs {
 
     $args = @('--no-mtime','--no-check-certificates','-N','8','--fragment-retries',"$FragmentRetries",'-R',"$Retry",'-f',$Format,'-o',$outTmpl)
     if ($ListFormats) { $args = @('--list-formats','--yes-playlist') }
+    if ($ListSubs) { $args = @('--list-subs','--yes-playlist') ; return $args }
     if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--concurrent-fragments')) { $args += @('--concurrent-fragments','4') }
     if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--retry-on-http-error')) { $args += @('--retry-on-http-error','403,429') }
     if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--retry-sleep')) { $args += @('--retry-sleep','2') }
     if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--sleep-requests')) { $args += @('--sleep-requests','1') }
     if ($Archive) { $args += @('--download-archive', $Archive) }
     if ($Proxy) { $args += @('--proxy',$Proxy) }
-    if ($Subtitles) { $args += @('--write-auto-subs','--write-subs','--sub-langs',$SubLangs) }
+    if ($Subtitles) {
+    $args += @('--write-subs','--sub-langs',$SubLangs)
+    if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--sleep-subtitles')) { $args += @('--sleep-subtitles','1') }
+        if ($SubsFormat) { $args += @('--convert-subs', $SubsFormat) }
+        # Ensure different languages do not overwrite each other and group by video in a subfolder
+        # Subtitles path: <SubtitlesDir>/<title [id]>/<lang>.ext
+        $subtitleRelPath = "%(title)s [%(id)s]/%(subtitle_lang)s.%(ext)s"
+        if ($SubtitlesDir) {
+            $subtitlePath = Join-Path $SubtitlesDir $subtitleRelPath
+            $args += @('-o', "subtitle:$subtitlePath")
+        } else {
+            $args += @('-o', "subtitle:$subtitleRelPath")
+        }
+    }
     if ($SponsorBlock) { $args += @('--sponsorblock-remove','sponsor,intro,outro,selfpromo,interaction,preview') }
     if ($AudioOnly) {
         $args += @('-x','--audio-format', $AudioFormat, '--audio-quality', $AudioQuality)
@@ -125,7 +142,7 @@ function Get-CommonArgs {
 $yt = Get-YtDlpExe
 $ytHelp = Get-HelpText -Exe $yt
 $cookieArgs = Get-CookieArgs -Browser $Browser -NoCookies:$NoCookies
-$common = Get-CommonArgs -Format $Format -OutTemplate $OutTemplate -Proxy $Proxy -Retry $Retry -FragmentRetries $FragmentRetries -Subtitles:$Subtitles -SubLangs $SubLangs -SponsorBlock:$SponsorBlock -Extra $Extra -Archive $Archive -YtHelp $ytHelp -AudioOnly:$AudioOnly -AudioFormat $AudioFormat -AudioQuality $AudioQuality -EmbedMeta:$EmbedMeta -TranscodeWebm:$TranscodeWebm -Container $Container -UseSiteFormatFolders:$UseSiteFormatFolders -OutBase $OutBase -PrintSummary:$PrintSummary -ListFormats:$ListFormats
+$common = Get-CommonArgs -Format $Format -OutTemplate $OutTemplate -Proxy $Proxy -Retry $Retry -FragmentRetries $FragmentRetries -Subtitles:$Subtitles -SubLangs $SubLangs -SubtitlesDir $SubtitlesDir -SubsFormat $SubsFormat -SponsorBlock:$SponsorBlock -Extra $Extra -Archive $Archive -YtHelp $ytHelp -AudioOnly:$AudioOnly -AudioFormat $AudioFormat -AudioQuality $AudioQuality -EmbedMeta:$EmbedMeta -TranscodeWebm:$TranscodeWebm -Container $Container -UseSiteFormatFolders:$UseSiteFormatFolders -OutBase $OutBase -PrintSummary:$PrintSummary -ListFormats:$ListFormats
 
 $targets = @()
 if ($Url) { $targets += $Url }

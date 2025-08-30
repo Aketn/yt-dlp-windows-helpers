@@ -29,6 +29,30 @@ It does NOT include downloaded media nor the yt-dlp upstream repo/binary.
 2. Run Task: "yt-dlp: Download URL (quick)" and input URL and browser
 3. Outputs are routed into `Movies/` or `Musics/` automatically
 
+## Subtitles (default behavior)
+
+- Quick tasks automatically fetch English/Japanese subtitles (langs: `ja,en`).
+- Subtitles are converted to SRT and saved under `Subtitles/<Title [ID]>/*.srt` per video.
+- If both languages exist, both are saved as separate files in that folder, e.g.:
+  - `Subtitles/Title [VIDEO_ID]/ja.srt`
+  - `Subtitles/Title [VIDEO_ID]/en.srt`
+- Videos are not modified; subtitles are kept as sidecar files.
+- If you want to embed subtitles into a single file later, see hints below.
+
+### Embed subtitles later (optional)
+
+MKV (no re-encode):
+
+```powershell
+ffmpeg -i "video.mp4" -i "Subtitles/Title [VIDEO_ID]/ja.srt" -c copy -c:s srt "video.withsub.mkv"
+```
+
+MP4 (mov_text):
+
+```powershell
+ffmpeg -i "video.mp4" -i "Subtitles/Title [VIDEO_ID]/ja.srt" -c copy -c:s mov_text "video.withsub.mp4"
+```
+
 ## Audio-only preset
 
 Use the task: "yt-dlp: Audio-only (m4a 192K, by site/uploader)"
