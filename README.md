@@ -29,6 +29,22 @@ It does NOT include downloaded media nor the yt-dlp upstream repo/binary.
 2. Run Task: "yt-dlp: Download URL (quick)" and input URL and browser
 3. Outputs are routed into `Movies/` or `Musics/` automatically
 
+### About "quick" tasks (speed-first)
+
+- Quick tasks prioritize speed and simplicity. They download a single best progressive stream without merging.
+- Therefore, they do NOT guarantee a specific resolution or container/codec.
+  - If the site only provides progressive MP4 for the chosen quality, you'll get MP4 even if `-Container` is set to webm.
+  - HLS (m3u8) is deprioritized to avoid slowness, but may still be used if no alternative exists.
+- Subtitles (ja,en) are still saved as sidecar SRT files.
+
+If you need consistent quality or format, use one of the following instead:
+
+- High quality with audio >=192k (single audio):
+  - Task: "yt-dlp: Download URL (prefer >=192k audio)"
+- Dual-audio (ja+en) and robust merging with metadata (recommended):
+  - Task: "yt-dlp: Download URL (ja+en audio, mkv multi)"
+  - Uses MKV container and merges multiple audio tracks reliably; avoids m3u8 where possible.
+
 ## Subtitles (default behavior)
 
 - Quick tasks automatically fetch English/Japanese subtitles (langs: `ja,en`).

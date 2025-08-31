@@ -5,23 +5,14 @@
       "id": "browser",
       "type": "pickString",
       "description": "Cookies from which browser?",
-      "options": [
-        "edge",
-        "chrome",
-        "chromium",
-        "brave",
-        "vivaldi",
-        "firefox",
-        "librewolf",
-        "none"
-      ],
+      "options": ["edge","chrome","chromium","brave","vivaldi","firefox","librewolf","none"],
       "default": "edge"
     },
     {
       "id": "container",
       "type": "pickString",
       "description": "Preferred container",
-      "options": ["auto", "mp4", "webm"],
+      "options": ["auto","mp4","webm","mkv"],
       "default": "auto"
     },
     {
@@ -52,14 +43,14 @@
       "id": "playlist",
       "type": "pickString",
       "description": "Playlist download?",
-      "options": ["true", "false"],
+      "options": ["true","false"],
       "default": "false"
     },
     {
       "id": "subs",
       "type": "pickString",
       "description": "Download subtitles?",
-      "options": ["true", "false"],
+      "options": ["true","false"],
       "default": "false"
     },
     {
@@ -72,7 +63,7 @@
       "id": "sponsorblock",
       "type": "pickString",
       "description": "Remove SponsorBlock segments?",
-      "options": ["false", "true"],
+      "options": ["false","true"],
       "default": "false"
     },
     {
@@ -85,7 +76,7 @@
       "id": "dryRun",
       "type": "pickString",
       "description": "Dry run? (print command only)",
-      "options": ["false", "true"],
+      "options": ["false","true"],
       "default": "false"
     },
     {
@@ -108,191 +99,177 @@
         "-AudioQuality","192K",
         "-EmbedMeta:true",
         "-UseSiteFormatFolders",
-  "-OutBase","${workspaceFolder}",
-  "-IncludeSourceUrl",
+        "-OutBase","${workspaceFolder}",
+        "-IncludeSourceUrl",
         "-Archive","archive-audio.txt",
         "-Browser","${input:browser}"
       ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
+      "options": {"cwd": "${workspaceFolder}"}
     },
     {
       "label": "yt-dlp: List formats (loop)",
       "type": "shell",
       "command": "pwsh",
-      "args": [
-        "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/ListFormatsCheck.ps1",
-        "-Browser","${input:browser}"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
+      "args": ["-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/ListFormatsCheck.ps1","-Browser","${input:browser}"]
     },
     {
       "label": "yt-dlp: List subtitles (loop)",
       "type": "shell",
       "command": "pwsh",
-      "args": [
-        "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/ListSubsLoop.ps1",
-        "-Browser","${input:browser}"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
+      "args": ["-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/ListSubsLoop.ps1","-Browser","${input:browser}"]
     },
     {
       "label": "yt-dlp: List subtitles (URL)",
       "type": "shell",
       "command": "pwsh",
-      "args": [
-        "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/yt-dlp-run.ps1",
-        "-Url","${input:urlInput}",
-        "-ListSubs",
-        "-Browser","${input:browser}"
-      ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
+      "args": ["-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/yt-dlp-run.ps1","-Url","${input:urlInput}","-ListSubs","-Browser","${input:browser}"]
     },
     {
       "label": "yt-dlp: Download URL (quick)",
       "type": "shell",
       "command": "pwsh",
       "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-  "${workspaceFolder}/yt-dlp-run.ps1",
-  "-Url", "${input:urlInput}",
-  "-Browser", "${input:browser}",
-  "-Subtitles:true",
-  "-SubLangs", "ja.*,en.*",
-  "-SubsFormat", "srt",
-  "-SubtitlesDir", "${workspaceFolder}/Subtitles",
-  "-Container", "${input:container}",
-  "-TranscodeWebm:false",
-  "-UseSiteFormatFolders",
-  "-OutBase", "${workspaceFolder}",
-  "-IncludeSourceUrl",
-  "-AudioMultistreams",
-  "-Sort", "lang~ja,lang~en,abr,quality,res,fps",
-  "-Format", "bv*+ba[lang=ja]+ba[lang=en]/bv*+ba[lang=en]+ba[lang=ja]/bv*+ba/b"
+        "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/yt-dlp-run.ps1",
+        "-Url","${input:urlInput}",
+        "-Browser","${input:browser}",
+        "-Subtitles:true","-SubLangs","ja.*,en.*",
+        "-SubsFormat","srt",
+        "-SubtitlesDir","${workspaceFolder}/Subtitles",
+        "-Container","${input:container}",
+        "-TranscodeWebm:false",
+        "-UseSiteFormatFolders",
+        "-OutBase","${workspaceFolder}",
+        "-IncludeSourceUrl",
+  "-Format","b[protocol!=m3u8]/b"
       ],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
+      "options": {"cwd": "${workspaceFolder}"}
     },
     {
       "label": "yt-dlp: Download from file (quick)",
       "type": "shell",
       "command": "pwsh",
       "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-  "${workspaceFolder}/yt-dlp-run.ps1",
-  "-UrlFile", "${input:urlFile}",
-  "-Browser", "${input:browser}",
-  "-Subtitles:true",
-  "-SubLangs", "ja.*,en.*",
-  "-SubsFormat", "srt",
-  "-SubtitlesDir", "${workspaceFolder}/Subtitles",
-  "-Container", "${input:container}",
-  "-TranscodeWebm:false",
-  "-UseSiteFormatFolders",
-  "-OutBase", "${workspaceFolder}",
-  "-IncludeSourceUrl",
-  "-AudioMultistreams",
-  "-Sort", "lang~ja,lang~en,abr,quality,res,fps",
-  "-Format", "bv*+ba[lang=ja]+ba[lang=en]/bv*+ba[lang=en]+ba[lang=ja]/bv*+ba/b"
+        "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/yt-dlp-run.ps1",
+        "-UrlFile","${input:urlFile}",
+        "-Browser","${input:browser}",
+        "-Subtitles:true","-SubLangs","ja.*,en.*",
+        "-SubsFormat","srt",
+        "-SubtitlesDir","${workspaceFolder}/Subtitles",
+        "-Container","${input:container}",
+        "-TranscodeWebm:false",
+        "-UseSiteFormatFolders",
+        "-OutBase","${workspaceFolder}",
+        "-IncludeSourceUrl",
+  "-Format","b[protocol!=m3u8]/b"
       ],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
+      "options": {"cwd": "${workspaceFolder}"}
+    },
+    {
+      "label": "yt-dlp: Download URL (quick, webm-only)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/yt-dlp-run.ps1",
+        "-Url","${input:urlInput}",
+        "-Browser","${input:browser}",
+        "-Subtitles:true","-SubLangs","ja.*,en.*",
+        "-SubsFormat","srt",
+        "-SubtitlesDir","${workspaceFolder}/Subtitles",
+        "-Container","webm",
+        "-TranscodeWebm:false",
+        "-UseSiteFormatFolders",
+        "-OutBase","${workspaceFolder}",
+        "-IncludeSourceUrl",
+        "-Format","b[ext=webm][vcodec!=none][acodec!=none][protocol!=m3u8]/b[ext=webm][protocol!=m3u8]"
+      ],
+      "options": {"cwd": "${workspaceFolder}"}
+    },
+    {
+      "label": "yt-dlp: Download from file (quick, webm-only)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/yt-dlp-run.ps1",
+        "-UrlFile","${input:urlFile}",
+        "-Browser","${input:browser}",
+        "-Subtitles:true","-SubLangs","ja.*,en.*",
+        "-SubsFormat","srt",
+        "-SubtitlesDir","${workspaceFolder}/Subtitles",
+        "-Container","webm",
+        "-TranscodeWebm:false",
+        "-UseSiteFormatFolders",
+        "-OutBase","${workspaceFolder}",
+        "-IncludeSourceUrl",
+        "-Format","b[ext=webm][vcodec!=none][acodec!=none][protocol!=m3u8]/b[ext=webm][protocol!=m3u8]"
+      ],
+      "options": {"cwd": "${workspaceFolder}"}
     },
     {
       "label": "yt-dlp: Download URL (advanced)",
       "type": "shell",
       "command": "pwsh",
       "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/yt-dlp-run.ps1",
-        "-Url", "${input:urlInput}",
-        "-Format", "${input:format}",
-        "-OutTemplate", "${input:outtmpl}",
-  "-Browser", "${input:browser}",
-  "-Container", "${input:container}",
+        "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/yt-dlp-run.ps1",
+        "-Url","${input:urlInput}",
+        "-Format","${input:format}",
+        "-OutTemplate","${input:outtmpl}",
+        "-Browser","${input:browser}",
+        "-Container","${input:container}",
         "-Playlist:${input:playlist}",
         "-Subtitles:${input:subs}",
-        "-SubLangs", "${input:sublangs}",
+        "-SubLangs","${input:sublangs}",
         "-SponsorBlock:${input:sponsorblock}",
-        "-Proxy", "${input:proxy}",
-  "-UseSiteFormatFolders:false",
-  "-TranscodeWebm:false",
-  "-DryRun:${input:dryRun}",
-        "-Extra", "${input:extra}"
+        "-Proxy","${input:proxy}",
+        "-UseSiteFormatFolders:false",
+        "-TranscodeWebm:false",
+        "-DryRun:${input:dryRun}",
+        "-Extra","${input:extra}"
       ],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
+      "options": {"cwd": "${workspaceFolder}"}
     },
     {
       "label": "yt-dlp: Download URL (prefer >=192k audio)",
       "type": "shell",
       "command": "pwsh",
       "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/yt-dlp-run.ps1",
-        "-Url", "${input:urlInput}",
-        "-Browser", "${input:browser}",
-        "-Subtitles:true",
-        "-SubLangs", "ja,en",
-        "-SubsFormat", "srt",
-        "-SubtitlesDir", "${workspaceFolder}/Subtitles",
-        "-Container", "${input:container}",
+        "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/yt-dlp-run.ps1",
+        "-Url","${input:urlInput}",
+        "-Browser","${input:browser}",
+        "-Subtitles:true","-SubLangs","ja.*,en.*",
+        "-SubsFormat","srt",
+        "-SubtitlesDir","${workspaceFolder}/Subtitles",
+        "-Container","${input:container}",
         "-TranscodeWebm:false",
         "-UseSiteFormatFolders",
-        "-OutBase", "${workspaceFolder}",
+        "-OutBase","${workspaceFolder}",
         "-IncludeSourceUrl",
-  "-Sort", "abr",
-  "-Format", "bv*+ba[abr>=192]/b[abr>=192]/bv*+ba/b"
+        "-Sort","abr",
+        "-Format","bv*+ba[abr>=192]/b[abr>=192]/bv*+ba/b"
       ],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
+      "options": {"cwd": "${workspaceFolder}"}
     },
     {
       "label": "yt-dlp: Download URL (ja+en audio, multi-tracks)",
       "type": "shell",
       "command": "pwsh",
       "args": [
-        "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/yt-dlp-run.ps1",
-        "-Url", "${input:urlInput}",
-        "-Browser", "${input:browser}",
-        "-Subtitles:true", "-SubLangs", "ja.*,en.*",
-        "-SubsFormat", "srt",
-        "-SubtitlesDir", "${workspaceFolder}/Subtitles",
-        "-Container", "${input:container}",
+        "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/yt-dlp-run.ps1",
+        "-Url","${input:urlInput}",
+        "-Browser","${input:browser}",
+        "-Subtitles:true","-SubLangs","ja.*,en.*",
+        "-SubsFormat","srt",
+        "-SubtitlesDir","${workspaceFolder}/Subtitles",
+        "-Container","${input:container}",
         "-TranscodeWebm:false",
-  "-UseSiteFormatFolders",
-  "-OutBase", "${workspaceFolder}",
-  "-IncludeSourceUrl",
-  "-Sort", "lang~ja,lang~en,abr,quality,res,fps",
-  "-Format", "bv*+ba[lang=ja]+ba[lang=en]/bv*+ba[lang=en]+ba[lang=ja]/bv*+ba/b",
+        "-UseSiteFormatFolders",
+        "-OutBase","${workspaceFolder}",
+        "-IncludeSourceUrl",
+        "-Sort","lang~ja,lang~en,abr,quality,res,fps",
+        "-Format","bv*+ba[lang=ja]+ba[lang=en]/bv*+ba[lang=en]+ba[lang=ja]/bv*+ba/b",
         "-AudioMultistreams"
       ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
-  },
+      "options": {"cwd": "${workspaceFolder}"}
+    },
     {
       "label": "yt-dlp: Download URL (ja+en audio, mkv multi)",
       "type": "shell",
@@ -306,45 +283,37 @@
         "-SubtitlesDir","${workspaceFolder}/Subtitles",
         "-Container","mkv",
         "-TranscodeWebm:false",
-  "-UseSiteFormatFolders",
-  "-OutBase","${workspaceFolder}",
-  "-IncludeSourceUrl",
+        "-UseSiteFormatFolders",
+        "-OutBase","${workspaceFolder}",
+        "-IncludeSourceUrl",
         "-AudioMultistreams",
-  "-Sort","lang~ja,lang~en,abr,quality,res,fps",
-  "-Format","bv*+ba[lang=ja]+ba[lang=en]/bv*+ba[lang=en]+ba[lang=ja]/bv*+ba/b"
+        "-Sort","lang~en,lang~ja,abr,quality,res,fps",
+        "-Format","bv*+ba[protocol!=m3u8][lang=en]+ba[protocol!=m3u8][lang=ja]/bv*+ba[lang=en]+ba[lang=ja]/bv*+ba"
       ],
-      "options": { "cwd": "${workspaceFolder}" },
-      "problemMatcher": []
+      "options": {"cwd": "${workspaceFolder}"}
     },
     {
       "label": "yt-dlp: Download from file (advanced)",
       "type": "shell",
       "command": "pwsh",
       "args": [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "${workspaceFolder}/yt-dlp-run.ps1",
-        "-UrlFile", "${input:urlFile}",
-        "-Format", "${input:format}",
-        "-OutTemplate", "${input:outtmpl}",
-  "-Browser", "${input:browser}",
-  "-Container", "${input:container}",
+        "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/yt-dlp-run.ps1",
+        "-UrlFile","${input:urlFile}",
+        "-Format","${input:format}",
+        "-OutTemplate","${input:outtmpl}",
+        "-Browser","${input:browser}",
+        "-Container","${input:container}",
         "-Playlist:${input:playlist}",
         "-Subtitles:${input:subs}",
-        "-SubLangs", "${input:sublangs}",
+        "-SubLangs","${input:sublangs}",
         "-SponsorBlock:${input:sponsorblock}",
-        "-Proxy", "${input:proxy}",
-  "-UseSiteFormatFolders:false",
-  "-TranscodeWebm:false",
-  "-DryRun:${input:dryRun}",
-        "-Extra", "${input:extra}"
+        "-Proxy","${input:proxy}",
+        "-UseSiteFormatFolders:false",
+        "-TranscodeWebm:false",
+        "-DryRun:${input:dryRun}",
+        "-Extra","${input:extra}"
       ],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
+      "options": {"cwd": "${workspaceFolder}"}
     }
   ]
 }
