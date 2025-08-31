@@ -163,13 +163,16 @@
   "-Url", "${input:urlInput}",
   "-Browser", "${input:browser}",
   "-Subtitles:true",
-  "-SubLangs", "ja,en",
+  "-SubLangs", "ja.*,en.*",
   "-SubsFormat", "srt",
   "-SubtitlesDir", "${workspaceFolder}/Subtitles",
   "-Container", "${input:container}",
   "-TranscodeWebm:false",
   "-UseSiteFormatFolders",
-  "-OutBase", "${workspaceFolder}"
+  "-OutBase", "${workspaceFolder}",
+  "-AudioMultistreams",
+  "-Sort", "lang~ja,lang~en,abr,quality,res,fps",
+  "-Format", "bv*+ba/lang~ja.*/bv*+ba/lang~en.*/bv*+ba/b"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -189,13 +192,16 @@
   "-UrlFile", "${input:urlFile}",
   "-Browser", "${input:browser}",
   "-Subtitles:true",
-  "-SubLangs", "ja,en",
+  "-SubLangs", "ja.*,en.*",
   "-SubsFormat", "srt",
   "-SubtitlesDir", "${workspaceFolder}/Subtitles",
   "-Container", "${input:container}",
   "-TranscodeWebm:false",
   "-UseSiteFormatFolders",
-  "-OutBase", "${workspaceFolder}"
+  "-OutBase", "${workspaceFolder}",
+  "-AudioMultistreams",
+  "-Sort", "lang~ja,lang~en,abr,quality,res,fps",
+  "-Format", "bv*+ba/lang~ja.*/bv*+ba/lang~en.*/bv*+ba/b"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -260,6 +266,28 @@
       },
       "problemMatcher": []
     },
+    {
+      "label": "yt-dlp: Download URL (ja+en audio, multi-tracks)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/yt-dlp-run.ps1",
+        "-Url", "${input:urlInput}",
+        "-Browser", "${input:browser}",
+        "-Subtitles:true", "-SubLangs", "ja.*,en.*",
+        "-SubsFormat", "srt",
+        "-SubtitlesDir", "${workspaceFolder}/Subtitles",
+        "-Container", "${input:container}",
+        "-TranscodeWebm:false",
+        "-UseSiteFormatFolders",
+        "-OutBase", "${workspaceFolder}",
+    "-Sort", "lang~ja,lang~en,abr,quality,res,fps",
+    "-Format", "bv*+ba/lang~ja.*/bv*+ba/lang~en.*/bv*+ba/b",
+        "-AudioMultistreams"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+  },
     {
       "label": "yt-dlp: Download from file (advanced)",
       "type": "shell",
