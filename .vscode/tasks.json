@@ -251,10 +251,9 @@
         "-Container", "${input:container}",
         "-TranscodeWebm:false",
         "-UseSiteFormatFolders",
-        "-OutBase", "${workspaceFolder}",
-        // Prefer audio >=192k if available, otherwise gracefully fall back
-        "-Extra", "-S", "abr",
-        "-Extra", "-f", "bv*+ba[abr>=192]/b[abr>=192]/bv*+ba/b"
+  "-OutBase", "${workspaceFolder}",
+  "-Sort", "abr",
+  "-Format", "bv*+ba[abr>=192]/b[abr>=192]/bv*+ba/b"
       ],
       "options": {
         "cwd": "${workspaceFolder}"

@@ -8,6 +8,8 @@ param(
     [Parameter(Mandatory=$false)][string]$UrlFile,
     [Parameter(Mandatory=$false)][string]$Format = "bv*+ba/b",
     [Parameter(Mandatory=$false)][string]$OutTemplate = "%(title)s [%(id)s].%(ext)s",
+    # Sorting expression for yt-dlp (-S). Example: 'abr,quality'. Avoid passing raw '-S' from callers.
+    [Parameter(Mandatory=$false)][string]$Sort,
     [Parameter(Mandatory=$false)][switch]$AudioOnly,
     [Parameter(Mandatory=$false)][string]$AudioFormat = "m4a",
     [Parameter(Mandatory=$false)][string]$AudioQuality = "192K",
@@ -89,6 +91,7 @@ function Get-CommonArgs {
     }
 
     $args = @('--no-mtime','--no-check-certificates','-N','8','--fragment-retries',"$FragmentRetries",'-R',"$Retry",'-f',$Format,'-o',$outTmpl)
+    if ($Sort -and $YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--format-sort')) { $args += @('-S',$Sort) }
     if ($ListFormats) { $args = @('--list-formats','--yes-playlist') }
     if ($ListSubs) { $args = @('--list-subs','--yes-playlist') ; return $args }
     if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--concurrent-fragments')) { $args += @('--concurrent-fragments','4') }
@@ -117,7 +120,7 @@ function Get-CommonArgs {
         if ($EmbedMeta) { $args += @('--embed-thumbnail','--embed-metadata','--embed-chapters','--add-metadata') }
     } else {
         # Container preference
-        if ($Container -eq 'mp4' -or $TranscodeWebm) {
+    if ($Container -eq 'mp4' -or $TranscodeWebm) {
             # Prefer yt-dlp preset alias if supported
             if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--preset-alias')) {
                 $args += @('--preset-alias','mp4')
@@ -132,7 +135,7 @@ function Get-CommonArgs {
             if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--format-sort')) { $args += @('-S','vcodec:vp9,acodec:opus,abr,lang,quality,res,fps') }
         } else {
             # auto: gently prefer higher audio bitrate when choices tie on video metrics
-            if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--format-sort')) { $args += @('-S','abr,lang,quality,res,fps') }
+            if (-not $Sort -and $YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--format-sort')) { $args += @('-S','abr,lang,quality,res,fps') }
         }
     }
     if ($PrintSummary) {
@@ -163,6 +166,11 @@ $allArgs = @()
 $allArgs += $cookieArgs
 $allArgs += $common
 $allArgs += $playlistArgs
+# Pass through any remaining, unbound args (after '--') and also explicit -Extra values
+$extraArgs = @()
+if ($Extra -and $Extra.Count -gt 0) { $extraArgs += $Extra }
+if ($args -and $args.Count -gt 0) { $extraArgs += $args }
+$allArgs += $extraArgs
 $allArgs += $targets
 
 Write-Host "Running: $yt $($allArgs -join ' ')" -ForegroundColor Cyan
