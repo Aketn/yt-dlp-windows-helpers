@@ -11,13 +11,15 @@ param(
     # Sorting expression for yt-dlp (-S). Example: 'abr,quality'. Avoid passing raw '-S' from callers.
     [Parameter(Mandatory=$false)][string]$Sort,
     [Parameter(Mandatory=$false)][switch]$AudioOnly,
+    # Embed source URL into media metadata (writes webpage_url to purl/comment)
+    [Parameter(Mandatory=$false)][switch]$IncludeSourceUrl,
     # Allow merging multiple audio streams when available (e.g., ja+en)
     [Parameter(Mandatory=$false)][switch]$AudioMultistreams,
     [Parameter(Mandatory=$false)][string]$AudioFormat = "m4a",
     [Parameter(Mandatory=$false)][string]$AudioQuality = "192K",
     [Parameter(Mandatory=$false)][switch]$EmbedMeta,
     [Parameter(Mandatory=$false)][switch]$TranscodeWebm = $false,
-    [Parameter(Mandatory=$false)][ValidateSet('auto','mp4','webm')]
+    [Parameter(Mandatory=$false)][ValidateSet('auto','mp4','webm','mkv')]
     [string]$Container = 'auto',
     [Parameter(Mandatory=$false)][switch]$UseSiteFormatFolders,
     [Parameter(Mandatory=$false)][string]$OutBase = ".",
@@ -77,7 +79,7 @@ function Get-CookieArgs {
 function Get-CommonArgs {
     param(
     [string]$Format,[string]$OutTemplate,[string]$Proxy,[int]$Retry,[int]$FragmentRetries,[switch]$Subtitles,[string]$SubLangs,[string]$SubtitlesDir,[string]$SubsFormat,[switch]$SponsorBlock,[string[]]$Extra,[string]$Archive,[string]$YtHelp,
-    [switch]$AudioOnly,[switch]$AudioMultistreams,[string]$AudioFormat,[string]$AudioQuality,[switch]$EmbedMeta,[switch]$TranscodeWebm,[ValidateSet('auto','mp4','webm')] [string]$Container,[switch]$UseSiteFormatFolders,[string]$OutBase,[switch]$PrintSummary,[switch]$ListFormats
+    [switch]$AudioOnly,[switch]$IncludeSourceUrl,[switch]$AudioMultistreams,[string]$AudioFormat,[string]$AudioQuality,[switch]$EmbedMeta,[switch]$TranscodeWebm,[ValidateSet('auto','mp4','webm','mkv')] [string]$Container,[switch]$UseSiteFormatFolders,[string]$OutBase,[switch]$PrintSummary,[switch]$ListFormats
     )
     # Output template auto layout if requested
     $outTmpl = $OutTemplate
@@ -117,6 +119,13 @@ function Get-CommonArgs {
         }
     }
     if ($SponsorBlock) { $args += @('--sponsorblock-remove','sponsor,intro,outro,selfpromo,interaction,preview') }
+    # Include source URL in metadata if requested
+    if ($IncludeSourceUrl) {
+        # Map info field webpage_url to common metadata tags
+        $args += @('--parse-metadata','webpage_url:purl','--parse-metadata','webpage_url:comment')
+        # Ensure embedding of metadata is enabled
+        if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--embed-metadata')) { $args += @('--embed-metadata') }
+    }
     if ($AudioOnly) {
         $args += @('-x','--audio-format', $AudioFormat, '--audio-quality', $AudioQuality)
         if ($EmbedMeta) { $args += @('--embed-thumbnail','--embed-metadata','--embed-chapters','--add-metadata') }
@@ -135,6 +144,8 @@ function Get-CommonArgs {
         } elseif ($Container -eq 'webm') {
             if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--merge-output-format')) { $args += @('--merge-output-format','webm') }
             if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--format-sort')) { $args += @('-S','vcodec:vp9,acodec:opus,abr,lang,quality,res,fps') }
+        } elseif ($Container -eq 'mkv') {
+            if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--merge-output-format')) { $args += @('--merge-output-format','mkv') }
         } else {
             # auto: gently prefer higher audio bitrate when choices tie on video metrics
             if (-not $Sort -and $YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--format-sort')) { $args += @('-S','abr,lang,quality,res,fps') }
@@ -155,7 +166,7 @@ function Get-CommonArgs {
 $yt = Get-YtDlpExe
 $ytHelp = Get-HelpText -Exe $yt
 $cookieArgs = Get-CookieArgs -Browser $Browser -NoCookies:$NoCookies
-$common = Get-CommonArgs -Format $Format -OutTemplate $OutTemplate -Proxy $Proxy -Retry $Retry -FragmentRetries $FragmentRetries -Subtitles:$Subtitles -SubLangs $SubLangs -SubtitlesDir $SubtitlesDir -SubsFormat $SubsFormat -SponsorBlock:$SponsorBlock -Extra $Extra -Archive $Archive -YtHelp $ytHelp -AudioOnly:$AudioOnly -AudioMultistreams:$AudioMultistreams -AudioFormat $AudioFormat -AudioQuality $AudioQuality -EmbedMeta:$EmbedMeta -TranscodeWebm:$TranscodeWebm -Container $Container -UseSiteFormatFolders:$UseSiteFormatFolders -OutBase $OutBase -PrintSummary:$PrintSummary -ListFormats:$ListFormats
+$common = Get-CommonArgs -Format $Format -OutTemplate $OutTemplate -Proxy $Proxy -Retry $Retry -FragmentRetries $FragmentRetries -Subtitles:$Subtitles -SubLangs $SubLangs -SubtitlesDir $SubtitlesDir -SubsFormat $SubsFormat -SponsorBlock:$SponsorBlock -Extra $Extra -Archive $Archive -YtHelp $ytHelp -AudioOnly:$AudioOnly -IncludeSourceUrl:$IncludeSourceUrl -AudioMultistreams:$AudioMultistreams -AudioFormat $AudioFormat -AudioQuality $AudioQuality -EmbedMeta:$EmbedMeta -TranscodeWebm:$TranscodeWebm -Container $Container -UseSiteFormatFolders:$UseSiteFormatFolders -OutBase $OutBase -PrintSummary:$PrintSummary -ListFormats:$ListFormats
 
 $targets = @()
 if ($Url) { $targets += $Url }

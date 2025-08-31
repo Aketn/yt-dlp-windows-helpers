@@ -108,7 +108,8 @@
         "-AudioQuality","192K",
         "-EmbedMeta:true",
         "-UseSiteFormatFolders",
-        "-OutBase","${workspaceFolder}",
+  "-OutBase","${workspaceFolder}",
+  "-IncludeSourceUrl",
         "-Archive","archive-audio.txt",
         "-Browser","${input:browser}"
       ],
@@ -170,6 +171,7 @@
   "-TranscodeWebm:false",
   "-UseSiteFormatFolders",
   "-OutBase", "${workspaceFolder}",
+  "-IncludeSourceUrl",
   "-AudioMultistreams",
   "-Sort", "lang~ja,lang~en,abr,quality,res,fps",
   "-Format", "bv*+ba/lang~ja.*/bv*+ba/lang~en.*/bv*+ba/b"
@@ -199,6 +201,7 @@
   "-TranscodeWebm:false",
   "-UseSiteFormatFolders",
   "-OutBase", "${workspaceFolder}",
+  "-IncludeSourceUrl",
   "-AudioMultistreams",
   "-Sort", "lang~ja,lang~en,abr,quality,res,fps",
   "-Format", "bv*+ba/lang~ja.*/bv*+ba/lang~en.*/bv*+ba/b"
@@ -257,7 +260,8 @@
         "-Container", "${input:container}",
         "-TranscodeWebm:false",
         "-UseSiteFormatFolders",
-  "-OutBase", "${workspaceFolder}",
+        "-OutBase", "${workspaceFolder}",
+        "-IncludeSourceUrl",
   "-Sort", "abr",
   "-Format", "bv*+ba[abr>=192]/b[abr>=192]/bv*+ba/b"
       ],
@@ -279,8 +283,9 @@
         "-SubtitlesDir", "${workspaceFolder}/Subtitles",
         "-Container", "${input:container}",
         "-TranscodeWebm:false",
-        "-UseSiteFormatFolders",
-        "-OutBase", "${workspaceFolder}",
+  "-UseSiteFormatFolders",
+  "-OutBase", "${workspaceFolder}",
+  "-IncludeSourceUrl",
     "-Sort", "lang~ja,lang~en,abr,quality,res,fps",
     "-Format", "bv*+ba/lang~ja.*/bv*+ba/lang~en.*/bv*+ba/b",
         "-AudioMultistreams"
@@ -288,6 +293,29 @@
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": []
   },
+    {
+      "label": "yt-dlp: Download URL (ja+en audio, mkv multi)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/yt-dlp-run.ps1",
+        "-Url","${input:urlInput}",
+        "-Browser","${input:browser}",
+        "-Subtitles:true","-SubLangs","ja.*,en.*",
+        "-SubsFormat","srt",
+        "-SubtitlesDir","${workspaceFolder}/Subtitles",
+        "-Container","mkv",
+        "-TranscodeWebm:false",
+  "-UseSiteFormatFolders",
+  "-OutBase","${workspaceFolder}",
+  "-IncludeSourceUrl",
+        "-AudioMultistreams",
+        "-Sort","lang~ja,lang~en,abr,quality,res,fps",
+        "-Format","bv*+ba/lang~ja.*/ba/lang~en.*/b"
+      ],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
     {
       "label": "yt-dlp: Download from file (advanced)",
       "type": "shell",
