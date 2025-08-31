@@ -174,7 +174,7 @@
   "-IncludeSourceUrl",
   "-AudioMultistreams",
   "-Sort", "lang~ja,lang~en,abr,quality,res,fps",
-  "-Format", "bv*+ba/lang~ja.*/bv*+ba/lang~en.*/bv*+ba/b"
+  "-Format", "bv*+ba[lang=ja]+ba[lang=en]/bv*+ba[lang=en]+ba[lang=ja]/bv*+ba/b"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -204,7 +204,7 @@
   "-IncludeSourceUrl",
   "-AudioMultistreams",
   "-Sort", "lang~ja,lang~en,abr,quality,res,fps",
-  "-Format", "bv*+ba/lang~ja.*/bv*+ba/lang~en.*/bv*+ba/b"
+  "-Format", "bv*+ba[lang=ja]+ba[lang=en]/bv*+ba[lang=en]+ba[lang=ja]/bv*+ba/b"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
@@ -286,8 +286,8 @@
   "-UseSiteFormatFolders",
   "-OutBase", "${workspaceFolder}",
   "-IncludeSourceUrl",
-    "-Sort", "lang~ja,lang~en,abr,quality,res,fps",
-    "-Format", "bv*+ba/lang~ja.*/bv*+ba/lang~en.*/bv*+ba/b",
+  "-Sort", "lang~ja,lang~en,abr,quality,res,fps",
+  "-Format", "bv*+ba[lang=ja]+ba[lang=en]/bv*+ba[lang=en]+ba[lang=ja]/bv*+ba/b",
         "-AudioMultistreams"
       ],
       "options": { "cwd": "${workspaceFolder}" },
@@ -310,8 +310,8 @@
   "-OutBase","${workspaceFolder}",
   "-IncludeSourceUrl",
         "-AudioMultistreams",
-        "-Sort","lang~ja,lang~en,abr,quality,res,fps",
-        "-Format","bv*+ba/lang~ja.*/ba/lang~en.*/b"
+  "-Sort","lang~ja,lang~en,abr,quality,res,fps",
+  "-Format","bv*+ba[lang=ja]+ba[lang=en]/bv*+ba[lang=en]+ba[lang=ja]/bv*+ba/b"
       ],
       "options": { "cwd": "${workspaceFolder}" },
       "problemMatcher": []
