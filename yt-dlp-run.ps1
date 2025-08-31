@@ -34,7 +34,8 @@ param(
     [Parameter(Mandatory=$false)][int]$Retry = 3,
     [Parameter(Mandatory=$false)][int]$FragmentRetries = 10,
     [Parameter(Mandatory=$false)][switch]$DryRun,
-    [Parameter(Mandatory=$false)][string]$Extra = ''
+    # Extra args to pass to yt-dlp. Accept array to preserve quoting (no naive splitting).
+    [Parameter(Mandatory=$false)][string[]]$Extra = @()
 )
 
 $ErrorActionPreference = 'Stop'
@@ -71,7 +72,7 @@ function Get-CookieArgs {
 
 function Get-CommonArgs {
     param(
-    [string]$Format,[string]$OutTemplate,[string]$Proxy,[int]$Retry,[int]$FragmentRetries,[switch]$Subtitles,[string]$SubLangs,[string]$SubtitlesDir,[string]$SubsFormat,[switch]$SponsorBlock,[string]$Extra,[string]$Archive,[string]$YtHelp,
+    [string]$Format,[string]$OutTemplate,[string]$Proxy,[int]$Retry,[int]$FragmentRetries,[switch]$Subtitles,[string]$SubLangs,[string]$SubtitlesDir,[string]$SubsFormat,[switch]$SponsorBlock,[string[]]$Extra,[string]$Archive,[string]$YtHelp,
     [switch]$AudioOnly,[string]$AudioFormat,[string]$AudioQuality,[switch]$EmbedMeta,[switch]$TranscodeWebm,[ValidateSet('auto','mp4','webm')] [string]$Container,[switch]$UseSiteFormatFolders,[string]$OutBase,[switch]$PrintSummary,[switch]$ListFormats
     )
     # Output template auto layout if requested
@@ -124,18 +125,21 @@ function Get-CommonArgs {
                 if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--remux-video')) { $args += @('--remux-video','mp4') }
                 if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--merge-output-format')) { $args += @('--merge-output-format','mp4') }
                 # Try to prefer compatible codecs for mp4
-                if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--format-sort')) { $args += @('-S','vcodec:h264,acodec:aac,lang,quality,res,fps,hdr:12') }
+                if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--format-sort')) { $args += @('-S','vcodec:h264,acodec:aac,abr,lang,quality,res,fps,hdr:12') }
             }
         } elseif ($Container -eq 'webm') {
             if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--merge-output-format')) { $args += @('--merge-output-format','webm') }
-            if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--format-sort')) { $args += @('-S','vcodec:vp9,acodec:opus,lang,quality,res,fps') }
+            if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--format-sort')) { $args += @('-S','vcodec:vp9,acodec:opus,abr,lang,quality,res,fps') }
+        } else {
+            # auto: gently prefer higher audio bitrate when choices tie on video metrics
+            if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--format-sort')) { $args += @('-S','abr,lang,quality,res,fps') }
         }
     }
     if ($PrintSummary) {
         $summary = 'after_move:[summary] site=%(extractor_key)s id=%(id)s title=%(title).100s res=%(width,NA)sx%(height,NA)s@%(fps,NA)sfps audio=%(acodec,NA)s %(abr,NA)sK %(asr,NA)sHz ch=%(audio_channels,NA)s ext=%(ext)s file=%(filepath)s'
         if ($YtHelp -and (Supports-Option -HelpText $YtHelp -Option '--print')) { $args += @('--print', $summary) }
     }
-    if ($Extra) { $args += $Extra.Split(' ') }
+    if ($Extra -and $Extra.Count -gt 0) { $args += $Extra }
     return $args
 }
 

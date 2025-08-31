@@ -233,6 +233,35 @@
       "problemMatcher": []
     },
     {
+      "label": "yt-dlp: Download URL (prefer >=192k audio)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/yt-dlp-run.ps1",
+        "-Url", "${input:urlInput}",
+        "-Browser", "${input:browser}",
+        "-Subtitles:true",
+        "-SubLangs", "ja,en",
+        "-SubsFormat", "srt",
+        "-SubtitlesDir", "${workspaceFolder}/Subtitles",
+        "-Container", "${input:container}",
+        "-TranscodeWebm:false",
+        "-UseSiteFormatFolders",
+        "-OutBase", "${workspaceFolder}",
+        // Prefer audio >=192k if available, otherwise gracefully fall back
+        "-Extra", "-S", "abr",
+        "-Extra", "-f", "bv*+ba[abr>=192]/b[abr>=192]/bv*+ba/b"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "yt-dlp: Download from file (advanced)",
       "type": "shell",
       "command": "pwsh",
