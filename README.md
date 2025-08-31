@@ -26,7 +26,7 @@ It does NOT include downloaded media nor the yt-dlp upstream repo/binary.
 ## Quick start
 
 1. Open this folder in VS Code
-2. Run Task: "yt-dlp: Download URL (quick)" and input URL and browser
+2. Run Task: "01) yt-dlp: Download URL (quick)" and input URL and browser
 3. Outputs are routed into `Movies/` or `Musics/` automatically
 
 ### About "quick" tasks (speed-first)
@@ -40,10 +40,25 @@ It does NOT include downloaded media nor the yt-dlp upstream repo/binary.
 If you need consistent quality or format, use one of the following instead:
 
 - High quality with audio >=192k (single audio):
-  - Task: "yt-dlp: Download URL (prefer >=192k audio)"
+  - Task: "05) yt-dlp: Download URL (prefer >=192k audio)"
 - Dual-audio (ja+en) and robust merging with metadata (recommended):
-  - Task: "yt-dlp: Download URL (ja+en audio, mkv multi)"
+  - Task: "06) yt-dlp: Download URL (ja+en audio, mkv multi)"
   - Uses MKV container and merges multiple audio tracks reliably; avoids m3u8 where possible.
+
+### Converting local videos to audio (m4a/mp3/opus/flac)
+
+- Task: "14) ffmpeg: Convert local video to audio (prompt)"
+  - Enter a file path (e.g. G:\\path\\to\\video.mp4), it outputs m4a@192k next to the source.
+- Task: "15) ffmpeg: Convert local video to audio (folder scan *.mp4 -> m4a 192k)"
+  - Converts all .mp4 files under the workspace recursively.
+
+Script: `ffmpeg-convert-audio.ps1`
+
+- Usage: `pwsh -File ffmpeg-convert-audio.ps1 <source> [m4a|mp3|opus|flac] [bitrate] [-outdir <dir>]`
+
+- Examples:
+  - `pwsh -File ffmpeg-convert-audio.ps1 "G:\\PDFふぁいるよう\\③mp4\\full_audio (1).mp4" m4a 192k`
+  - `pwsh -File ffmpeg-convert-audio.ps1 video.mp4 opus 160k -outdir out`
 
 ## Subtitles (default behavior)
 
@@ -71,11 +86,11 @@ ffmpeg -i "video.mp4" -i "Subtitles/Title [VIDEO_ID]/ja.srt" -c copy -c:s mov_te
 
 ## Audio-only preset
 
-Use the task: "yt-dlp: Audio-only (m4a 192K, by site/uploader)"
+Use the task: "10) yt-dlp: Audio-only (m4a 192K, by site/uploader)"
 
 ## Format listing
 
-Run the task: "yt-dlp: List formats (loop)" or execute `./ListFormatsCheck.ps1`
+Run the task: "11) yt-dlp: List formats (loop)" or execute `./ListFormatsCheck.ps1`
 
 ## Notes
 

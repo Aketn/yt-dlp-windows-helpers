@@ -28,6 +28,12 @@
       "default": ""
     },
     {
+      "id": "srcFile",
+      "type": "promptString",
+      "description": "Source media file path to convert",
+      "default": ""
+    },
+    {
       "id": "format",
       "type": "promptString",
       "description": "Format selector (-f)",
@@ -88,7 +94,7 @@
   ],
   "tasks": [
     {
-      "label": "yt-dlp: Audio-only (m4a 192K, by site/uploader)",
+      "label": "10) yt-dlp: Audio-only (m4a 192K, by site/uploader)",
       "type": "shell",
       "command": "pwsh",
       "args": [
@@ -107,25 +113,47 @@
       "options": {"cwd": "${workspaceFolder}"}
     },
     {
-      "label": "yt-dlp: List formats (loop)",
+      "label": "14) ffmpeg: Convert local video to audio (prompt)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+  "-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/ffmpeg-convert-audio.ps1",
+  "${input:srcFile}",
+  "m4a",
+  "192k"
+      ],
+      "options": {"cwd": "${workspaceFolder}"}
+    },
+    {
+      "label": "15) ffmpeg: Convert local video to audio (folder scan *.mp4 -> m4a 192k)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile","-ExecutionPolicy","Bypass","-Command",
+  "Get-ChildItem -LiteralPath '${workspaceFolder}' -Recurse -Include *.mp4 | ForEach-Object { & '${workspaceFolder}/ffmpeg-convert-audio.ps1' $_.FullName m4a 192k }"
+      ],
+      "options": {"cwd": "${workspaceFolder}"}
+    },
+    {
+      "label": "11) yt-dlp: List formats (loop)",
       "type": "shell",
       "command": "pwsh",
       "args": ["-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/ListFormatsCheck.ps1","-Browser","${input:browser}"]
     },
     {
-      "label": "yt-dlp: List subtitles (loop)",
+      "label": "13) yt-dlp: List subtitles (loop)",
       "type": "shell",
       "command": "pwsh",
       "args": ["-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/ListSubsLoop.ps1","-Browser","${input:browser}"]
     },
     {
-      "label": "yt-dlp: List subtitles (URL)",
+      "label": "12) yt-dlp: List subtitles (URL)",
       "type": "shell",
       "command": "pwsh",
       "args": ["-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder}/yt-dlp-run.ps1","-Url","${input:urlInput}","-ListSubs","-Browser","${input:browser}"]
     },
     {
-      "label": "yt-dlp: Download URL (quick)",
+      "label": "01) yt-dlp: Download URL (quick)",
       "type": "shell",
       "command": "pwsh",
       "args": [
@@ -145,7 +173,7 @@
       "options": {"cwd": "${workspaceFolder}"}
     },
     {
-      "label": "yt-dlp: Download from file (quick)",
+      "label": "02) yt-dlp: Download from file (quick)",
       "type": "shell",
       "command": "pwsh",
       "args": [
@@ -165,7 +193,7 @@
       "options": {"cwd": "${workspaceFolder}"}
     },
     {
-      "label": "yt-dlp: Download URL (quick, webm-only)",
+      "label": "03) yt-dlp: Download URL (quick, webm-only)",
       "type": "shell",
       "command": "pwsh",
       "args": [
@@ -185,7 +213,7 @@
       "options": {"cwd": "${workspaceFolder}"}
     },
     {
-      "label": "yt-dlp: Download from file (quick, webm-only)",
+      "label": "04) yt-dlp: Download from file (quick, webm-only)",
       "type": "shell",
       "command": "pwsh",
       "args": [
@@ -205,7 +233,7 @@
       "options": {"cwd": "${workspaceFolder}"}
     },
     {
-      "label": "yt-dlp: Download URL (advanced)",
+      "label": "08) yt-dlp: Download URL (advanced)",
       "type": "shell",
       "command": "pwsh",
       "args": [
@@ -228,7 +256,7 @@
       "options": {"cwd": "${workspaceFolder}"}
     },
     {
-      "label": "yt-dlp: Download URL (prefer >=192k audio)",
+      "label": "05) yt-dlp: Download URL (prefer >=192k audio)",
       "type": "shell",
       "command": "pwsh",
       "args": [
@@ -249,7 +277,7 @@
       "options": {"cwd": "${workspaceFolder}"}
     },
     {
-      "label": "yt-dlp: Download URL (ja+en audio, multi-tracks)",
+      "label": "07) yt-dlp: Download URL (ja+en audio, multi-tracks)",
       "type": "shell",
       "command": "pwsh",
       "args": [
@@ -271,7 +299,7 @@
       "options": {"cwd": "${workspaceFolder}"}
     },
     {
-      "label": "yt-dlp: Download URL (ja+en audio, mkv multi)",
+      "label": "06) yt-dlp: Download URL (ja+en audio, mkv multi)",
       "type": "shell",
       "command": "pwsh",
       "args": [
@@ -293,7 +321,7 @@
       "options": {"cwd": "${workspaceFolder}"}
     },
     {
-      "label": "yt-dlp: Download from file (advanced)",
+      "label": "09) yt-dlp: Download from file (advanced)",
       "type": "shell",
       "command": "pwsh",
       "args": [
